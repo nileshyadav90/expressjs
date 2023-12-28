@@ -7,6 +7,7 @@ router.get("/", async (req, res)=> {
     title: 'Magical Kashmir Tour Package For Family',
     description: 'The dates, Hotels and itinerary can be customised according to your preferences. Feel free to reach out to us and let us know if you wish for the same.'
   };
+  a.url = a.title.replace(/[ ]/g, '-').toLowerCase();
   const r = new productModal(a);
   await r.save();
   res.send("respond with a resource");
