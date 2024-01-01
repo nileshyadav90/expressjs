@@ -5,8 +5,8 @@ const moment = require("moment");
 let VendorSchema = new Schema(
   {
     displayName: { type: String, required: true, max: 100 },
-    email: { type: String, required: true },
-    mobile: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    mobile: { type: String, required: true, unique: true },
     originalName: { type: String, required: true },
     password: {type: String, required: true },
     modifiedAt: { type: Number, default: () => moment().utc().valueOf() },
@@ -29,4 +29,4 @@ let VendorSchema = new Schema(
 //   skills: "text",
 // });
 
-module.exports = mongoose.model("Product", ProductSchema);
+module.exports = mongoose.model("Vendor", VendorSchema);

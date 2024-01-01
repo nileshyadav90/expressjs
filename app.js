@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
 const productRouter = require('./routes/product');
+const vendorRouter = require('./routes/vendor');
 
 const app = express();
 
@@ -32,5 +33,6 @@ mongoose.connect('mongodb://localhost:27017/traveldemo').then(()=>{
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/product', productRouter);
+app.use('/vendor', vendorRouter);
 
 module.exports = app;
