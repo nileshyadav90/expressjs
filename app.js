@@ -11,6 +11,15 @@ const userRouter = require('./routes/user');
 const productRouter = require('./routes/product');
 const vendorRouter = require('./routes/vendor');
 
+
+// google firestore
+const admin = require('firebase-admin');
+const serviceAccount = require("./google-firebase-admin-key.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://swapnalekhmarath-1585149573340.firebaseio.com"
+});
+
 const app = express();
 
 app.use(cors());
