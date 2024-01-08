@@ -8,6 +8,8 @@ let UserSchema = new Schema(
     lastname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
+    agoraResponse: { type: {} },
     salt: {type: String, required: true },
     mobile: { type: String, unique: true, index: true, select: false, sparse: true },
     modifiedAt: { type: Number, default: () => moment().utc().valueOf() },

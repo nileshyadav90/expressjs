@@ -1,6 +1,25 @@
 const user = require("../models/user");
 const md5 = require("md5");
 const admin = require("firebase-admin");
+const agoraPassword = "Ny@1990";
+const fetch = require("node-fetch");
+const generateUniqueAccountName = (proposedName) => {
+  return user
+    .findOne({ username: proposedName })
+    .then(function (account) {
+      if (account) {
+        console.log('no can do try again: ' + proposedName);
+        proposedName += Math.floor((Math.random() * 100) + 1);
+        return generateUniqueAccountName(proposedName); // <== return statement here
+      }
+      console.log('proposed name is unique: ' + proposedName);
+      return proposedName;
+    })
+    .catch(function (err) {
+      console.error(err);
+      throw err;
+    });
+}
 
 exports.createUser = async (data) => {
   try {
@@ -12,12 +31,38 @@ exports.createUser = async (data) => {
       lastname: data.lastname,
       email: data.email,
       salt: a,
-      mobile: data?.mobile ? data.mobile.replace(/[^0-9]/g, "") : null,
       password: md5(a + data.password),
+      username: await generateUniqueAccountName(data.firstname.toLowerCase().substring(0, 10))
     };
+    if(data?.mobile) {
+      d.mobile = data.mobile.replace(/[^0-9]/g, "");
+    }
     let r = new user(d);
     await r.save();
-    return await generateToken(r.toJSON());
+    const tokenData = await generateToken(r.toJSON());
+    try {
+      
+      const agoraPayload = {username: d.username, password: d.username + agoraPassword};
+      const agoraResponse = await fetch("https://a61.chat.agora.io/61323458/400245/users", {
+        body: JSON.stringify(agoraPayload),
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 007eJxTYNBwbfaunrn3aNhfD5PT6nfqz175ffhx3cOoTTr9zm6WtwwUGEzNkizTUiwtjVLNjE0STQwSzQ3N04zTzE3MjEySDSxMcmzmpDYEMjI0X5vNwsjAysDIwMQA4jMwAAD0aB7w"
+        }
+      });
+      console.log('asasa------>', agoraResponse.status);
+      if(agoraResponse.status == 200) {
+        const agoraData = await agoraResponse.json();
+        r.agoraResponse = agoraData;
+        await r.save();
+      } else {
+        throw "Error- Agora failed";
+      }
+    } catch(e) {
+      console.error('Agora error ======>', e.toString());
+    }
+    return tokenData;
   } catch (e) {
     console.log(e);
     if (e.toString().includes("duplicate") && e.toString().includes("email"))
