@@ -9,7 +9,7 @@ let UserSchema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     salt: {type: String, required: true },
-    mobile: { type: String, required: true, unique: true },
+    mobile: { type: String, unique: true, index: true, select: false, sparse: true },
     modifiedAt: { type: Number, default: () => moment().utc().valueOf() },
     createdAt: { type: Number, default: () => moment().utc().valueOf() },
   }

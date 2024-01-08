@@ -15,6 +15,12 @@ router.post('/login', async function(req, res, next) {
       email: input.email,
       password: input.password
     });
+    res.cookie("access-token", r.token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 86400,
+     });
     res.send({ data: { ...r }, message: 'Data found'});
   } catch(e) {
     res.send({ message: e.toString()});
@@ -28,12 +34,11 @@ router.post('/register', async function(req, res, next) {
       firstname: input.firstname,
       lastname: input.lastname,
       email: input.email,
-      mobile: input.mobile,
       password: input.password
     });
-    res.send({ data: { user: r }});
+    res.send({ data: { ...r }, message: 'Account created'});
   } catch(e) {
-    res.send({ message: e.toString()});
+    res.status(400).send({ message: e.toString()});
   }
 });
 
